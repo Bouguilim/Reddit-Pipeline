@@ -1,0 +1,9 @@
+logs/
+*.env
+data/
+__pycache__/
+*.pyc
+docker-compose.override.yml
+volumes/
+config/config.conf
+.venv
