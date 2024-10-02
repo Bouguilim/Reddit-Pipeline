@@ -1,20 +1,5 @@
-# Reddit Pipeline
+# Reddit Video Games Review Pipeline
 
-## Coming Soon!
+Our project involves building a comprehensive data pipeline to analyze public sentiment and opinions on a video game, which serves as the input to the pipeline. We extract relevant data from Reddit and other sources, clean and process it, then apply large language models (LLMs) for sentiment analysis. The results are visualized on a dashboard, providing valuable insights into how people feel about the game, including whether their sentiments are positive or negative, and highlighting key opinions. We selected Reddit because it offers candid, unfiltered discussions where users freely express their thoughts.
 
-🚧 This project is currently under development. We are working hard to build an efficient pipeline for extracting and processing Reddit data. Stay tuned for updates! 🚧
-
-### Features
-- Data extraction from Reddit posts and comments
-- Data cleaning and preparation for sentiment analysis
-- Integration with MongoDB for data storage
-- Built with Apache Airflow for orchestrating the data pipeline
-
-### Installation
-Coming soon!
-
-### Usage
-Coming soon!
-
-### Contributing
-Contributions are welcome! Please feel free to submit a pull request or open an issue.
+<img src="index.svg" width="960" height="540" />
