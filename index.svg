@@ -61,7 +61,6 @@
             </style>
             <body>
                 <div id="main">
-                    <img src="https://icon.icepanel.io/Technology/svg/Apache-Airflow.svg" alt="Logo Image" />
                     <h1>Reddit Video Games Review Pipeline</h1>
                     <h2>Our Project is currently under construction, stay tuned !</h2>
                     <div id="progress"><div id="fill"><div id="barpercent"><h3>35%</h3></div></div></div>
