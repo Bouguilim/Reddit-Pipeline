@@ -1,11 +1,10 @@
 import re
-import json
 
 def data_cleaner(**kwargs) :
 
     # Retrieve the path from the previous task's XCom
     ti = kwargs['ti']
-    input_file = ti.xcom_pull(task_ids='reddit_extract')
+    posts_data = ti.xcom_pull(task_ids='reddit_extract')
 
     # Define a cleaning function
     def clean_text(text):
@@ -50,18 +49,9 @@ def data_cleaner(**kwargs) :
         
         return cleaned_data
 
-    file_path = input_file
-
-    with open(file_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
     # Clean the data
-    cleaned_data = clean_json_data(data)
-
-    # Save the cleaned JSON back to file
-    with open(file_path, 'w', encoding='utf-8') as f:
-        json.dump(cleaned_data, f, ensure_ascii=False, indent=4)
+    cleaned_data = clean_json_data(posts_data)
 
     print("Data cleaning complete!")
 
-    return file_path
+    return cleaned_data

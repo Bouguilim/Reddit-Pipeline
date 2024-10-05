@@ -1,16 +1,11 @@
 import os
 import praw
-import json
 import time
 import datetime
 from utils.constants import *
 
 
 def reddit_extractor(game) :
-
-    # Create a unique ID based on local time
-    def generate_uid():
-        return str(int(time.time() * 1000))  # milliseconds precision
 
     # Load scraped post IDs from file
     def load_scraped_ids(file_path='scraped_posts.txt'):
@@ -54,10 +49,11 @@ def reddit_extractor(game) :
         
         if submission.id in scraped_post_ids:
             continue
-
+        
+        pid = submission.id
         # Post level data
         post_data = {
-            "uid": generate_uid(),
+            "pid": pid,
             "date": datetime.datetime.fromtimestamp(int(submission.created_utc)),
             "title": submission.title,
             "body": submission.selftext,
@@ -68,8 +64,9 @@ def reddit_extractor(game) :
 
         # Fetch comments
         submission.comments.replace_more(limit=0)  # Load all comments
-        for comment in submission.comments.list():
+        for i, comment in enumerate(submission.comments.list()):
             comment_data = {
+                "cid": pid+'_'+str(i+1),
                 "date": datetime.datetime.fromtimestamp(int(comment.created_utc)),
                 "body": comment.body,
                 "score": comment.score
@@ -77,22 +74,15 @@ def reddit_extractor(game) :
             post_data["comments"].append(comment_data)
 
         posts_data.append(post_data)
-        new_post_ids.add(submission.id)  # Add post ID to new set
+        new_post_ids.add(pid)  # Add post ID to new set
         post_count += 1  # Increment post count
 
         # Delay to avoid hitting rate limit
         time.sleep(2)  # Wait 2 seconds between requests (adjust as needed)
-
-    # Save the new scraped post data to JSON file
-    if posts_data:
-        file_path = f'{OUTPUT_PATH}/reddit_comments.json'
-        with open(file_path, 'a', encoding='utf-8') as f:
-            json.dump(posts_data, f, ensure_ascii=False, indent=4, default=str)
-        print("Successful Extraction !")
 
     # Save new scraped post IDs to file
     save_scraped_ids(new_post_ids)
     print(f"Scraped {len(new_post_ids)} new posts.")
 
     # Return the file path for use in the next task
-    return file_path
+    return posts_data
