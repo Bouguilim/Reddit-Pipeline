@@ -2,7 +2,7 @@
 x-airflow-common:
   &airflow-common
   build:
-    context: .
+    context: ./image-airflow
     dockerfile: Dockerfile
   env_file:
     - env/airflow.env
@@ -12,11 +12,24 @@ x-airflow-common:
     - ./data:/opt/airflow/data
     - ./logs:/opt/airflow/logs
     - ./pipelines:/opt/airflow/pipelines
+    - ./jobs:/opt/airflow/jobs
     - ./utils:/opt/airflow/utils
-    - ./requirements.txt:/opt/airflow/requirements.txt
+    - ./image-airflow/requirements.txt:/opt/airflow/requirements.txt
     - ./init/init-airflow.sh:/opt/airflow/init-airflow.sh
   depends_on:
     - postgres
+  networks:
+    - airflow_net
+
+x-spark-common:
+  &spark-common
+  build:
+    context: ./image-spark
+    dockerfile: Dockerfile
+  volumes:
+    - ./jobs:/opt/bitnami/spark/jobs
+  networks:
+    - airflow_net
 
 services:
 
@@ -33,8 +46,6 @@ services:
     container_name: airflow-init
     command: ["bash", "/opt/airflow/init-airflow.sh"] 
     restart: "no"
-    networks:
-      - airflow_net
 
   airflow-webserver:
     <<: *airflow-common
@@ -46,8 +57,6 @@ services:
       airflow-init :
         condition: service_completed_successfully
         restart: true
-    networks:
-      - airflow_net
 
   airflow-scheduler:
     <<: *airflow-common
@@ -57,8 +66,6 @@ services:
       airflow-init :
         condition: service_completed_successfully
         restart: true
-    networks:
-      - airflow_net
 
   mongodb:
     image: mongo:5.0
@@ -71,37 +78,42 @@ services:
       - airflow_net
     volumes:
       - ./init/init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh
-
-  zookeeper:
-    image: bitnami/zookeeper:latest
-    container_name: zookeeper
+  
+  spark-master:
+    <<: *spark-common
+    container_name : spark-master
+    command: bin/spark-class org.apache.spark.deploy.master.Master
     ports:
-      - 2181:2181
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-    networks:
-      - airflow_net
+      - "9090:8080"
+      - "7077:7077"
 
-  kafka:
-    image: bitnami/kafka:latest
-    container_name: kafka
-    environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
-    ports:
-      - 9092:9092
-    networks:
-      - airflow_net
+  spark-worker-1:
+    <<: *spark-common
+    container_name : spark-worker-1
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    env_file:
+      - env/spark-worker.env
 
+  spark-worker-2:
+    <<: *spark-common
+    container_name : spark-worker-2
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    env_file:
+      - env/spark-worker.env
+  
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
-      - 3000:3000
+      - "3000:3000"
     volumes:
       - ./grafana:/var/lib/grafana
+    env_file:
+      - env/grafana.env
     networks:
       - airflow_net
 

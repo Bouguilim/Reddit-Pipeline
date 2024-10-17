@@ -4,21 +4,20 @@ import time
 import datetime
 from utils.constants import *
 
+# Load scraped post IDs from file
+def load_scraped_ids(file_path=f'{INPUT_PATH}/scraped_posts.txt'):
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            return set(line.strip() for line in f)
+    return set()
+
+# Save new scraped post IDs
+def save_scraped_ids(post_ids, file_path=f'{INPUT_PATH}/scraped_posts.txt'):
+    with open(file_path, 'a') as f:
+        for post_id in post_ids:
+            f.write(post_id + '\n')
 
 def reddit_extractor(game) :
-
-    # Load scraped post IDs from file
-    def load_scraped_ids(file_path='scraped_posts.txt'):
-        if os.path.exists(file_path):
-            with open(file_path, 'r') as f:
-                return set(line.strip() for line in f)
-        return set()
-
-    # Save new scraped post IDs
-    def save_scraped_ids(post_ids, file_path=f'{INPUT_PATH}/scraped_posts.txt'):
-        with open(file_path, 'a') as f:
-            for post_id in post_ids:
-                f.write(post_id + '\n')
 
     # Initialize Reddit API
     reddit = praw.Reddit(
@@ -54,7 +53,7 @@ def reddit_extractor(game) :
         # Post level data
         post_data = {
             "pid": pid,
-            "date": datetime.datetime.fromtimestamp(int(submission.created_utc)),
+            "date": str(datetime.datetime.fromtimestamp(int(submission.created_utc))),
             "title": submission.title,
             "body": submission.selftext,
             "score": submission.score,
@@ -67,7 +66,7 @@ def reddit_extractor(game) :
         for i, comment in enumerate(submission.comments.list()):
             comment_data = {
                 "cid": pid+'_'+str(i+1),
-                "date": datetime.datetime.fromtimestamp(int(comment.created_utc)),
+                "date": str(datetime.datetime.fromtimestamp(int(comment.created_utc))),
                 "body": comment.body,
                 "score": comment.score
             }

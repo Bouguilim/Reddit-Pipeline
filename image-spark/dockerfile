@@ -1,0 +1,31 @@
+FROM bitnami/spark
+
+USER root
+
+# Install required packages
+RUN install_packages wget build-essential zlib1g-dev
+
+# Download and install Python 3.8
+RUN apt-get update && apt-get install -y curl libffi-dev \
+    && curl -O https://www.python.org/ftp/python/3.8.18/Python-3.8.18.tgz \
+    && tar -xzf Python-3.8.18.tgz \
+    && cd Python-3.8.18 \
+    && ./configure --with-system-ffi\
+    && make \
+    && make install \
+    && cd ..
+
+# Set Python 3.8 as the default Python version
+RUN ln -s /usr/local/bin/python3.8 /usr/bin/python \
+    && ln -s /usr/local/bin/python3.8 /usr/bin/python3
+
+# Set the PATH to prioritize /usr/local/bin
+ENV PATH /usr/local/bin:$PATH
+
+# Verify the default Python version
+RUN python --version
+
+# Set environment variables
+ENV PYSPARK_PYTHON=/usr/local/bin/python3.8
+ENV PYTHONPATH /usr/local/bin/python3.8
+ENV PYSPARK_DRIVER_PYTHON=/usr/local/bin/python3.8

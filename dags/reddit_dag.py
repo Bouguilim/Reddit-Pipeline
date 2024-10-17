@@ -1,5 +1,6 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from airflow.utils.dates import days_ago
 import sys
 import os
@@ -8,6 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pipelines.reddit_extractor import reddit_extractor
 from pipelines.data_cleaner import data_cleaner
 from pipelines.mongodb_insert import insert_data_to_mongodb
+from jobs.spark_job import sentiment_analysis
 
 # Default arguments for the DAG
 default_args = {
@@ -49,4 +51,14 @@ with DAG(
         dag=dag
     )
 
-    extract_reddit_data >> clean_reddit_data >> insert_data
+    # Spark task for sentiment analysis
+    sentiment_task = SparkSubmitOperator(
+        task_id='sentiment-task',
+        conn_id="spark-conn",
+        name='Reddit-Sentiment-Analysis',
+        application="jobs/spark_job.py",
+        application_args=["--game", GAME],
+        dag=dag
+    )
+
+    extract_reddit_data >> clean_reddit_data >> [insert_data, sentiment_task]
