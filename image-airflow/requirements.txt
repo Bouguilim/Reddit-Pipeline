@@ -96,7 +96,7 @@ prawcore==2.4.0
 prison==0.2.1
 protobuf==4.25.3
 psutil==5.9.8
-psycopg2==2.9.10
+psycopg2-binary
 pycparser==2.21
 pydantic==2.6.1
 pydantic_core==2.16.2
