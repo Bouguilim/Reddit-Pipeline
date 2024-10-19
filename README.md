@@ -46,3 +46,13 @@ This project is a comprehensive data pipeline designed to analyze public sentime
        - Username: `admin`
        - Password: `admin`
      - Open the preconfigured dashboard to visualize the sentiment analysis results.
+
+## Example: Sentiment Analysis on "The Last of Us Part 2"
+
+Here’s a snapshot of a sentiment analysis dashboard for The Last of Us Part 2, a game that sparked significant debate in the gaming community.
+
+![dashboard](dashboard.png)
+
+Using the pipeline, we gathered Reddit discussions around the game, processed the data, and applied sentiment analysis to understand the overall public opinion. The dashboard provides a clear visual of how the community feels about different aspects of the game—highlighting both positive and negative sentiments, as well as key opinions.
+
+You can easily apply the same pipeline to any video game or topic of interest and visualize the results in Grafana.
