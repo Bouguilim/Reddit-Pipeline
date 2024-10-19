@@ -1,5 +1,46 @@
-# Reddit Video Games Review Pipeline
+# Reddit Sentiment Analysis Pipeline
 
-Our project involves building a comprehensive data pipeline to analyze public sentiment and opinions on a video game, which serves as the input to the pipeline. We extract relevant data from Reddit and other sources, clean and process it, then apply large language models (LLMs) for sentiment analysis. The results are visualized on a dashboard, providing valuable insights into how people feel about the game, including whether their sentiments are positive or negative, and highlighting key opinions. We selected Reddit because it offers candid, unfiltered discussions where users freely express their thoughts.
+## Project Overview
+This project is a comprehensive data pipeline designed to analyze public sentiment and opinions on a video game using Reddit data. It leverages the power of Spark for distributed data processing and Hugging Face's large language models (LLMs) for sentiment analysis. The results are visualized on a Grafana dashboard, providing insights into whether the sentiment is positive or negative and highlighting key opinions.
 
-<img src="index.svg" width="960" height="540" />
+### Key Components:
+1. **Reddit Data Extraction**: Extracts relevant posts and comments from Reddit.
+2. **Data Cleaning & Processing**: Cleans and processes the data to remove unwanted characters, stopwords, and filters out irrelevant posts.
+3. **Sentiment Analysis**: Applies Hugging Face's LLMs for sentiment analysis using a master-slave Spark architecture.
+4. **Visualization**: Sentiment analysis results are visualized in real-time on a Grafana dashboard.
+
+## Prerequisites
+
+- Install **Docker** (preferably Docker Desktop).
+- Ensure you have at least **16 GB of RAM** to efficiently run all the services (8 GB will cause performance issues).
+
+## Getting Started
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/Bouguilim/Reddit-Pipeline.git
+    cd Reddit-Pipeline
+    ```
+
+2. Modify the `congfig.conf` to add APIs token and the game name
+
+3. Build and start the services with Docker Compose:
+    ```bash
+    docker-compose up -d --build
+    ```
+
+   This may take a few minutes as the images are built and services are initialized.
+
+4. Once the containers have started, you can access the following services:
+
+   - **Airflow UI**: Navigate to [http://localhost:8080](http://localhost:8080) to access Airflow.
+     - Log in with the default credentials: 
+       - Username: `admin`
+       - Password: `admin`
+     - Start the DAG to begin data processing.
+
+   - **Grafana UI**: Navigate to [http://localhost:3000](http://localhost:3000) to access Grafana.
+     - Log in with the default credentials:
+       - Username: `admin`
+       - Password: `admin`
+     - Open the preconfigured dashboard to visualize the sentiment analysis results.

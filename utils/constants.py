@@ -29,6 +29,8 @@ TOKEN = parser.get('huggingface_api', 'TOKEN')
 API_URL = parser.get('huggingface_api', 'API_URL')
 
 # pipeline param
+GAME = parser.get('pipeline', 'GAME')
+SCHEDULE_INTREVAL = parser.get('pipeline', 'SCHEDULE_INTREVAL')
 POST_LIMIT = int(parser.get('pipeline', 'POST_LIMIT'))
 N_TOP_COMMENT = int(parser.get('pipeline', 'N_TOP_COMMENT'))
 

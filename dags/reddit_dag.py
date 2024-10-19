@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pipelines.reddit_extractor import reddit_extractor
 from pipelines.data_cleaner import data_cleaner
 from pipelines.mongodb_insert import insert_data_to_mongodb
-from jobs.spark_job import sentiment_analysis
+from utils.constants import GAME, SCHEDULE_INTREVAL
 
 # Default arguments for the DAG
 default_args = {
@@ -18,13 +18,11 @@ default_args = {
     'retries': 1,
 }
 
-GAME = 'the last of us part 2'
-
 # Define the DAG
 with DAG(
     'reddit_extraction_dag',
     default_args=default_args,
-    schedule_interval='*/5 * * * *',  # Run every 5 minutes
+    schedule_interval=f'*/{SCHEDULE_INTREVAL} * * * *',  # Run every 5 minutes
     catchup=False
 ) as dag:
 
