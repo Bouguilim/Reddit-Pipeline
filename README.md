@@ -3,6 +3,8 @@
 ## Project Overview
 This project is a comprehensive data pipeline designed to analyze public sentiment and opinions on a video game using Reddit data. It leverages the power of Spark for distributed data processing and Hugging Face's large language models (LLMs) for sentiment analysis. The results are visualized on a Grafana dashboard, providing insights into whether the sentiment is positive or negative and highlighting key opinions.
 
+![Pipeline Chart](pipeline.png)
+
 ### Key Components:
 1. **Reddit Data Extraction**: Extracts relevant posts and comments from Reddit.
 2. **Data Cleaning & Processing**: Cleans and processes the data to remove unwanted characters, stopwords, and filters out irrelevant posts.
